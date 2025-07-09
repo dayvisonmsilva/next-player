@@ -1,42 +1,128 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    background-color: #121212;
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+.player-container {
+    background-color: #1e1e1e;
+    border-radius: 15px;
+    padding: 25px;
+    width: 350px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+.album-art-container {
+    text-align: center;
+    margin-bottom: 20px;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+.album-art {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.song-info {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.song-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.artist {
+    font-size: 1rem;
+    color: #b3b3b3;
+    margin: 5px 0 0 0;
+}
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.progress-bar {
+    flex-grow: 1;
+    background-color: #444;
+    height: 4px;
+    border-radius: 2px;
+    margin: 0 10px;
+    cursor: pointer;
+}
+
+.progress {
+    background-color: #b3b3b3;
+    width: 0%; 
+    height: 100%;
+    border-radius: 2px;
+}
+
+.time-current,
+.time-total {
+    font-size: 0.75rem;
+    color: #b3b3b3;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.control-icon {
+    font-size: 1.2rem;
+    color: #b3b3b3;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.control-icon:hover {
+    color: #fff;
+}
+
+/* Estilo específico para o ícone de coração */
+.heart-icon {
+    font-size: 1.5rem;
+}
+
+/* Estilo para quando o coração for 'curtido' */
+.heart-icon.liked {
+    color: #e50914;
+}
+
+.play-pause-btn {
+    background-color: #e50914;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.play-pause-btn:hover {
+    transform: scale(1.05);
+}
+
+.play-icon {
+    font-size: 1.5rem;
+    color: #fff;
 }
