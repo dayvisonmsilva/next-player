@@ -1,11 +1,9 @@
-// src/app/page.js
-
-import Player from '@/components/Player';
+import VideoPlayer from '@/components/VideoPlayer';
 
 export default function HomePage() {
   return (
     <main>
-      <Player />
+      <VideoPlayer />
     </main>
   );
 }
