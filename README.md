@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎬 Player de Vídeo em Next.js
 
-## Getting Started
+Este é um projeto de um player de vídeo simples, criado com Next.js e React para fins de aprendizado.
 
-First, run the development server:
+## 🚀 Como Rodar o Projeto
+
+Siga os passos abaixo para executar este projeto em sua máquina local.
+
+### **1. Pré-requisitos**
+
+Antes de começar, você precisa ter duas ferramentas essenciais instaladas em seu computador:
+
+* **Node.js**: É um ambiente que permite executar JavaScript fora do navegador. Ao instalar o Node.js, o **npm** (gerenciador de pacotes) é instalado automaticamente.
+    * [Clique aqui para baixar e instalar o Node.js](https://nodejs.org/)
+
+* **Git**: É o sistema de controle de versão que usaremos para baixar o código do projeto.
+    * [Clique aqui para baixar e instalar o Git](https://git-scm.com/downloads)
+
+### **2. Passo a Passo**
+
+Com os pré-requisitos instalados, basta seguir estes 3 passos:
+
+#### **Passo 1: Clonar o Repositório 💻**
+
+"Clonar" significa fazer uma cópia do projeto do GitHub para o seu computador. Abra seu terminal (ou Git Bash no Windows) e execute o comando abaixo:
+
+```bash
+git clone [https://github.com/dayvisonmsilva/next-player.git](https://github.com/dayvisonmsilva/next-player.git)
+```
+#### **Passo 2: Acessar a Pasta do Projeto**
+
+Após clonar, uma nova pasta será criada. Acesse-a com o seguinte comando:
+Bash
+
+cd nome-do-seu-repositorio
+
+    Dica: O nome da pasta será o mesmo do final da URL que você usou no passo anterior.
+
+#### **Passo 3: Instalar as Dependências 📦**
+
+As "dependências" são todos os pacotes e extensões (como React, Next.js, Font Awesome, etc.) que o projeto precisa para funcionar. Este comando lê o arquivo package.json e baixa tudo automaticamente.
+Bash
+
+```bash
+npm install
+```
+
+### **3. Rodando a Aplicação ▶️**
+
+Depois que a instalação terminar, execute o seguinte comando para iniciar o servidor de desenvolvimento:
+Bash
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+O terminal mostrará uma mensagem indicando que o servidor está rodando. Agora, abra seu navegador de internet e acesse:
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Pronto! O player de vídeo estará funcionando no seu navegador para você testar e modificar.
