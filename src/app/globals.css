@@ -1,145 +1,176 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap");
 
 body {
-    background-color: #121212;
-    color: #fff;
-    font-family: 'Poppins', sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
+  background-color: #121212;
+  color: #fff;
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
 }
 
 .player-container {
-    background-color: #1e1e1e;
-    border-radius: 15px;
-    padding: 25px;
-    width: 350px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  background-color: #1e1e1e;
+  border-radius: 15px;
+  padding: 25px;
+  width: 350px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
 }
 
 .album-art-container {
-    text-align: center;
-    margin-bottom: 20px;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .album-art {
-    width: 100%;
-    border-radius: 10px;
+  width: 100%;
+  border-radius: 10px;
 }
 
 .song-info {
-    display: flex;
-    justify-content: space-between; 
-    align-items: center;
-    margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
 }
 
 .song-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
 }
 
 .artist {
-    font-size: 1rem;
-    color: #b3b3b3;
-    margin: 5px 0 0 0;
+  font-size: 1rem;
+  color: #b3b3b3;
+  margin: 5px 0 0 0;
 }
 
 .progress-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 10px;
 }
 
 .progress-bar {
-    flex-grow: 1;
-    background-color: #444;
-    height: 4px;
-    border-radius: 2px;
-    margin: 0 10px;
-    cursor: pointer;
+  flex-grow: 1;
+  background-color: #444;
+  height: 8px; /* Aumenta a altura da barra de progresso */
+  border-radius: 4px; /* Ajusta o border-radius para a nova altura */
+  margin: 0 10px;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative; /* Necessário para posicionar o pseudo-elemento */
 }
 
 .progress {
-    background-color: #b3b3b3;
-    width: 0%; 
-    height: 100%;
-    border-radius: 2px;
+  background-color: #fff;
+  height: 100%;
+  border-radius: 4px; /* Ajusta o border-radius para a nova altura */
+  transition: width 0.1s linear;
+  position: absolute; /* Permite sobrepor o indicador */
+  left: 0;
+  top: 0;
+}
+
+.progress::after {
+  content: "";
+  position: absolute;
+  right: 0; /* Posiciona inicialmente na extremidade direita */
+  top: 50%;
+  transform: translate(
+    50%,
+    -50%
+  ); /* Centraliza verticalmente e ajusta horizontalmente */
+  width: 12px;
+  height: 12px;
+  background-color: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Adiciona uma pequena sombra */
+  /* Adicione uma transição suave para o movimento */
+  transition: right 0.1s linear;
+}
+
+.progress-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 10px;
 }
 
 .time-current,
 .time-total {
-    font-size: 0.75rem;
-    color: #b3b3b3;
+  font-size: 0.75rem;
+  color: #b3b3b3;
 }
 
 .controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
 }
 
 .control-icon {
-    font-size: 1.2rem;
-    color: #b3b3b3;
-    cursor: pointer;
-    transition: color 0.2s;
+  font-size: 1.2rem;
+  color: #b3b3b3;
+  cursor: pointer;
+  transition: color 0.2s;
 }
 
 .control-icon:hover {
-    color: #fff;
+  color: #fff;
 }
 
 .heart-icon {
-    font-size: 1.5rem;
+  font-size: 1.5rem;
 }
 
 .heart-icon.liked {
-    color: #e50914;
+  color: #e50914;
 }
 
 .play-pause-btn {
-    background-color: #e50914;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: transform 0.2s;
+  background-color: #e50914;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s;
 }
 
 .play-pause-btn:hover {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 .play-icon {
-    font-size: 1.5rem;
-    color: #fff;
+  font-size: 1.5rem;
+  color: #fff;
 }
 
 .video-screen {
   width: 100%;
-  border-radius: 10px; 
-  display: block; 
+  border-radius: 10px;
+  display: block;
   cursor: pointer;
 }
 
 .volume-controls {
   display: flex;
   align-items: center;
-  width: 150px; 
+  width: 150px;
 }
 
 .volume-slider {
-  -webkit-appearance: none; 
+  -webkit-appearance: none;
   appearance: none;
   width: 100%;
   height: 4px;
