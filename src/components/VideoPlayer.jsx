@@ -10,12 +10,10 @@ export default function VideoPlayer() {
   const [currentTime, setCurrentTime] = useState(0);
   const [volume, setVolume] = useState(1);
   const [lastVolume, setLastVolume] = useState(1);
-  const [isSeeking, setIsSeeking] = useState(false); // NOVO: Estado para controlar o arraste
-
+  const [isSeeking, setIsSeeking] = useState(false);
   const videoRef = useRef(null);
   const progressRef = useRef(null);
 
-  // --- Lógica para arrastar a barra de progresso ---
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (isSeeking && videoRef.current && progressRef.current) {
@@ -42,16 +40,14 @@ export default function VideoPlayer() {
       }
     };
 
-    // Adiciona os ouvintes de evento no window para capturar o movimento em qualquer lugar da tela
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
 
-    // Função de limpeza para remover os ouvintes quando o componente for desmontado
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isSeeking, duration]); // Depende de 'isSeeking' e 'duration' para funcionar corretamente
+  }, [isSeeking, duration]);
 
   const handleProgressMouseDown = (e) => {
     setIsSeeking(true);
@@ -112,9 +108,20 @@ export default function VideoPlayer() {
   };
 
   const handleTimeUpdate = () => {
-    // Só atualiza o tempo se o usuário não estiver arrastando a barra
-    if (!isSeeking && videoRef.current) {
-      setCurrentTime(videoRef.current.currentTime);
+    if (videoRef.current) {
+      const currentVideoTime = videoRef.current.currentTime;
+      const currentVideoDuration = videoRef.current.duration;
+      if (
+        isFinite(currentVideoDuration) &&
+        currentVideoDuration > 0 &&
+        duration !== currentVideoDuration
+      ) {
+        setDuration(currentVideoDuration);
+      }
+
+      if (!isSeeking) {
+        setCurrentTime(currentVideoTime);
+      }
     }
   };
 
@@ -183,7 +190,7 @@ export default function VideoPlayer() {
         <div
           className="progress-bar"
           ref={progressRef}
-          onMouseDown={handleProgressMouseDown} // MUDOU: de onClick para onMouseDown
+          onMouseDown={handleProgressMouseDown}
         >
           <div
             className="progress"
@@ -194,7 +201,6 @@ export default function VideoPlayer() {
       </div>
 
       <div className="controls">
-        {/* MUDANÇA DE ÍCONES */}
         <i
           className="fas fa-rotate-left control-icon"
           onClick={handleRewind}
@@ -205,8 +211,6 @@ export default function VideoPlayer() {
             className={`fas ${isPlaying ? "fa-pause" : "fa-play"} play-icon`}
           ></i>
         </div>
-
-        {/* MUDANÇA DE ÍCONES */}
         <i
           className="fas fa-rotate-right control-icon"
           onClick={handleForward}
