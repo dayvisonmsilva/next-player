@@ -1,97 +1,153 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
-
+import { useState, useRef, useEffect, useCallback } from "react";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
-export default function VideoPlayer() {
-  const [isLiked, setIsLiked] = useState(false);
+export default function VideoPlayer({ video }) {
+  // --- Estados ---
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [volume, setVolume] = useState(1);
   const [lastVolume, setLastVolume] = useState(1);
   const [isSeeking, setIsSeeking] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+
+  // --- Refs ---
   const videoRef = useRef(null);
   const progressRef = useRef(null);
 
+  // --- Efeitos ---
+
+  // Reage à mudança do vídeo selecionado
   useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (isSeeking && videoRef.current && progressRef.current) {
-        const progressBar = progressRef.current;
-        const rect = progressBar.getBoundingClientRect();
-        const clickPositionX = e.clientX - rect.left;
-        const progressBarWidth = rect.width;
+    if (videoRef.current) {
+      videoRef.current.load();
+      setIsPlaying(false);
+      setCurrentTime(0);
+    }
+  }, [video]);
 
-        // Garante que o valor não seja menor que 0 ou maior que a largura da barra
-        const newTimeRatio = Math.max(
-          0,
-          Math.min(1, clickPositionX / progressBarWidth)
-        );
-        const newTime = newTimeRatio * duration;
-
-        videoRef.current.currentTime = newTime;
-        setCurrentTime(newTime);
-      }
-    };
-
-    const handleMouseUp = () => {
-      if (isSeeking) {
-        setIsSeeking(false);
-      }
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [isSeeking, duration]);
-
-  const handleProgressMouseDown = (e) => {
-    setIsSeeking(true);
-    // Permite o clique simples também
-    const progressBar = progressRef.current;
-    const rect = progressBar.getBoundingClientRect();
-    const clickPositionX = e.clientX - rect.left;
-    const progressBarWidth = rect.width;
-    const newTime = (clickPositionX / progressBarWidth) * duration;
-
-    videoRef.current.currentTime = newTime;
-    setCurrentTime(newTime);
-  };
-
+  // Otimização: Combina os dois efeitos de volume
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.volume = volume;
     }
-  }, [volume]);
-
-  const togglePlayPause = () => {
-    if (isPlaying) {
-      videoRef.current.pause();
-    } else {
-      videoRef.current.play();
-    }
-    setIsPlaying(!isPlaying);
-  };
-
-  const handleVolumeChange = (e) => {
-    const newVolume = parseFloat(e.target.value);
-    setVolume(newVolume);
-    if (newVolume > 0) {
-      setLastVolume(newVolume);
-    }
-  };
-
-  const toggleMute = () => {
     if (volume > 0) {
       setLastVolume(volume);
-      setVolume(0);
-    } else {
-      setVolume(lastVolume || 1);
     }
+  }, [volume]);
+
+  // Gerencia o arraste da barra de progresso
+  const seekToTime = useCallback(
+    (clientX) => {
+      if (!duration || !progressRef.current || !videoRef.current) return;
+      const progressBar = progressRef.current;
+      const rect = progressBar.getBoundingClientRect();
+      const seekRatio = Math.max(
+        0,
+        Math.min(1, (clientX - rect.left) / rect.width)
+      );
+      const newTime = seekRatio * duration;
+      videoRef.current.currentTime = newTime;
+      setCurrentTime(newTime);
+    },
+    [duration]
+  );
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (isSeeking) seekToTime(e.clientX);
+    };
+    const handleMouseUp = () => {
+      if (isSeeking) setIsSeeking(false);
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isSeeking, seekToTime]);
+
+  // --- Funções de Controle (Memoizadas com useCallback) ---
+
+  const handleProgressMouseDown = useCallback(
+    (e) => {
+      if (!duration) return;
+      setIsSeeking(true);
+      seekToTime(e.clientX);
+    },
+    [duration, seekToTime]
+  );
+
+  const togglePlayPause = useCallback(() => {
+    if (videoRef.current) {
+      const video = videoRef.current;
+      if (isPlaying) video.pause();
+      else video.play();
+      setIsPlaying((prev) => !prev);
+    }
+  }, [isPlaying]);
+
+  const handleForward = useCallback(() => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = Math.min(
+        duration,
+        videoRef.current.currentTime + 10
+      );
+    }
+  }, [duration]);
+
+  const handleRewind = useCallback(() => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = Math.max(
+        0,
+        videoRef.current.currentTime - 10
+      );
+    }
+  }, []);
+
+  const handleLike = useCallback(() => setIsLiked((prev) => !prev), []);
+  const handleVolumeChange = useCallback(
+    (e) => setVolume(parseFloat(e.target.value)),
+    []
+  );
+  const toggleMute = useCallback(
+    () => setVolume(volume > 0 ? 0 : lastVolume || 1),
+    [volume, lastVolume]
+  );
+
+  // --- Handlers de Eventos do Vídeo ---
+
+  const handleTimeUpdate = useCallback(() => {
+    if (videoRef.current) {
+      const { currentTime: currentVideoTime, duration: currentVideoDuration } =
+        videoRef.current;
+      if (
+        isFinite(currentVideoDuration) &&
+        currentVideoDuration > 0 &&
+        duration !== currentVideoDuration
+      ) {
+        setDuration(currentVideoDuration);
+      }
+      if (!isSeeking) {
+        setCurrentTime(currentVideoTime);
+      }
+    }
+  }, [duration, isSeeking]);
+
+  const handleLoadedMetadata = useCallback(() => {
+    if (videoRef.current) setDuration(videoRef.current.duration);
+  }, []);
+
+  const handleEnded = useCallback(() => setIsPlaying(false), []);
+
+  // --- Funções Utilitárias ---
+
+  const getVolumeIcon = () => {
+    if (volume === 0) return "fa-volume-xmark";
+    if (volume < 0.5) return "fa-volume-low";
+    return "fa-volume-high";
   };
 
   const formatTime = (time) => {
@@ -101,90 +157,36 @@ export default function VideoPlayer() {
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  const handleLoadedMetadata = () => {
-    if (videoRef.current) {
-      setDuration(videoRef.current.duration);
-    }
-  };
-
-  const handleTimeUpdate = () => {
-    if (videoRef.current) {
-      const currentVideoTime = videoRef.current.currentTime;
-      const currentVideoDuration = videoRef.current.duration;
-      if (
-        isFinite(currentVideoDuration) &&
-        currentVideoDuration > 0 &&
-        duration !== currentVideoDuration
-      ) {
-        setDuration(currentVideoDuration);
-      }
-
-      if (!isSeeking) {
-        setCurrentTime(currentVideoTime);
-      }
-    }
-  };
-
-  const handleEnded = () => {
-    setIsPlaying(false);
-  };
-
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-  };
-
-  const getVolumeIcon = () => {
-    if (volume === 0) return "fa-volume-xmark";
-    if (volume < 0.5) return "fa-volume-low";
-    return "fa-volume-high";
-  };
-
-  const handleForward = () => {
-    if (videoRef.current) {
-      videoRef.current.currentTime = Math.min(
-        videoRef.current.duration,
-        videoRef.current.currentTime + 10
-      );
-    }
-  };
-
-  const handleRewind = () => {
-    if (videoRef.current) {
-      videoRef.current.currentTime = Math.max(
-        0,
-        videoRef.current.currentTime - 10
-      );
-    }
-  };
-
+  // --- Renderização ---
   return (
     <div className="player-container">
       <div className="album-art-container">
         <video
           className="video-screen"
           ref={videoRef}
-          src="/videos/Runaway Baby - Bruno Mars (Lyrics).mp4"
+          key={video.src}
+          onClick={togglePlayPause}
           onLoadedMetadata={handleLoadedMetadata}
+          onDurationChange={handleLoadedMetadata}
           onTimeUpdate={handleTimeUpdate}
           onEnded={handleEnded}
-          onClick={togglePlayPause}
-        />
+        >
+          <source src={video.src} type="video/mp4" />
+          Seu navegador não suporta a tag de vídeo.
+        </video>
       </div>
-
       <div className="song-info">
         <div className="song-details">
-          <h2 className="song-title">Runaway Baby - Bruno Mars (Lyrics)</h2>
-          <p className="artist">Bruno Mars</p>
+          <h2 className="song-title">{video.title}</h2>
+          <p className="artist">{video.artist}</p>
         </div>
         <i
-          id="like-btn"
           className={`control-icon heart-icon ${
             isLiked ? "fa-solid fa-heart liked" : "fa-regular fa-heart"
           }`}
           onClick={handleLike}
-        ></i>
+        />
       </div>
-
       <div className="progress-container">
         <span className="time-current">{formatTime(currentTime)}</span>
         <div
@@ -195,32 +197,26 @@ export default function VideoPlayer() {
           <div
             className="progress"
             style={{ width: `${(currentTime / duration) * 100 || 0}%` }}
-          ></div>
+          />
         </div>
         <span className="time-total">{formatTime(duration)}</span>
       </div>
-
       <div className="controls">
-        <i
-          className="fas fa-rotate-left control-icon"
-          onClick={handleRewind}
-        ></i>
-
+        <i className="fas fa-rotate-left control-icon" onClick={handleRewind} />
         <div className="play-pause-btn" onClick={togglePlayPause}>
           <i
             className={`fas ${isPlaying ? "fa-pause" : "fa-play"} play-icon`}
-          ></i>
+          />
         </div>
         <i
           className="fas fa-rotate-right control-icon"
           onClick={handleForward}
-        ></i>
-
+        />
         <div className="volume-controls">
           <i
             className={`fas ${getVolumeIcon()} control-icon`}
             onClick={toggleMute}
-          ></i>
+          />
           <input
             type="range"
             min="0"
