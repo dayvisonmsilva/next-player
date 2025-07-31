@@ -18,7 +18,7 @@ export default function VideoPlayer({ video }) {
 
   // --- Efeitos ---
 
-  // Reage à mudança do vídeo selecionado
+  // Efeito que reage APENAS à mudança do vídeo selecionado.
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.load();
@@ -27,7 +27,7 @@ export default function VideoPlayer({ video }) {
     }
   }, [video]);
 
-  // Otimização: Combina os dois efeitos de volume
+  // Efeito que reage APENAS à mudança de volume.
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.volume = volume;
@@ -138,7 +138,8 @@ export default function VideoPlayer({ video }) {
 
   const handleLoadedMetadata = useCallback(() => {
     if (videoRef.current) setDuration(videoRef.current.duration);
-  }, []);
+    videoRef.current.volume = volume;
+  }, [volume]);
 
   const handleEnded = useCallback(() => setIsPlaying(false), []);
 
