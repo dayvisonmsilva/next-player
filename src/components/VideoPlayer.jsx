@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
-export default function VideoPlayer({ video }) {
+export default function VideoPlayer({ video, onVideoEnd }) {
   // --- Estados ---
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -22,7 +22,18 @@ export default function VideoPlayer({ video }) {
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.load();
-      setIsPlaying(false);
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch((error) => {
+            console.log("Autoplay foi prevenido pelo navegador:", error);
+            setIsPlaying(false);
+          });
+      }
+
       setCurrentTime(0);
     }
   }, [video]);
@@ -141,7 +152,13 @@ export default function VideoPlayer({ video }) {
     videoRef.current.volume = volume;
   }, [volume]);
 
-  const handleEnded = useCallback(() => setIsPlaying(false), []);
+  const handleEnded = useCallback(() => {
+    if (onVideoEnd) {
+      onVideoEnd();
+    } else {
+      setIsPlaying(false);
+    }
+  }, [onVideoEnd]);
 
   // --- Funções Utilitárias ---
 
