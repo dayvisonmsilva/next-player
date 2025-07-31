@@ -2,6 +2,20 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
+// --- Funções Utilitárias ---
+const formatTime = (time) => {
+  if (isNaN(time)) return "0:00";
+  const minutes = Math.floor(time / 60);
+  const seconds = Math.floor(time % 60);
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+};
+
+const getVolumeIcon = (volume) => {
+  if (volume === 0) return "fa-volume-xmark";
+  if (volume < 0.5) return "fa-volume-low";
+  return "fa-volume-high";
+};
+
 export default function VideoPlayer({ video, onVideoEnd }) {
   // --- Estados ---
   const [isPlaying, setIsPlaying] = useState(false);
@@ -160,21 +174,6 @@ export default function VideoPlayer({ video, onVideoEnd }) {
     }
   }, [onVideoEnd]);
 
-  // --- Funções Utilitárias ---
-
-  const getVolumeIcon = () => {
-    if (volume === 0) return "fa-volume-xmark";
-    if (volume < 0.5) return "fa-volume-low";
-    return "fa-volume-high";
-  };
-
-  const formatTime = (time) => {
-    if (isNaN(time)) return "0:00";
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-  };
-
   // --- Renderização ---
   return (
     <div className="player-container">
@@ -232,7 +231,7 @@ export default function VideoPlayer({ video, onVideoEnd }) {
         />
         <div className="volume-controls">
           <i
-            className={`fas ${getVolumeIcon()} control-icon`}
+            className={`fas ${getVolumeIcon(volume)} control-icon`}
             onClick={toggleMute}
           />
           <input
